@@ -8,4 +8,4 @@ const compareHash = (password: string, hash: string) => {
     return bcrypt.compareSync(password, hash)
 }
 
-export default {createHash, compareHash}
+export {createHash, compareHash}

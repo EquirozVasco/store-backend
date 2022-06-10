@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../entities/User";
-import hash from "../services/bcrypt.service";
+import {createHash} from "../services/bcrypt.service";
 
 const createUser = async (req: Request, res: Response) => {
     try {
@@ -8,7 +8,7 @@ const createUser = async (req: Request, res: Response) => {
         if (name === "" || money === "" || userName === "" || password === "" || role === "") {
             throw new Error("Please, fill all fields");
         } else {
-            let pass = await hash.createHash(password)
+            let pass = await createHash(password)
             const user = new User()
             user.name = name
             user.money = money
@@ -79,12 +79,13 @@ const deleteUser = async (req: Request, res: Response) => {
 const getUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
-        let user = await User.findOneBy({ id: parseInt(id) })
+        let user = await User.findOne({relations:{role: true}, where: {id: parseInt(id)} })
         if (!user) return res.json({ message: "User does not exist" })
         const data = {
             name: user.name,
             money: user.money,
             userName: user.userName,
+            role: user.role,
             active: user.active,
         }
         return res.json({ message: 'User consulted successfully.', data })
