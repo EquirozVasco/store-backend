@@ -4,8 +4,8 @@ import hash from "../services/bcrypt.service";
 
 const createUser = async (req: Request, res: Response) => {
     try {
-        const { name, money, userName, password } = req.body
-        if (name === "" || money === "" || userName === "" || password === "") {
+        const { name, money, userName, password, role } = req.body
+        if (name === "" || money === "" || userName === "" || password === "" || role === "") {
             throw new Error("Please, fill all fields");
         } else {
             let pass = await hash.createHash(password)
@@ -14,6 +14,7 @@ const createUser = async (req: Request, res: Response) => {
             user.money = money
             user.userName = userName
             user.password = pass
+            user.role = role
             await user.save()
             let data = {
                 name,
@@ -31,10 +32,13 @@ const createUser = async (req: Request, res: Response) => {
 const getUsers = async (req: Request, res: Response) => {
     try {
         const users = await User.find({
+            relations: {
+                role: true
+            },
             select: {
                 name: true,
                 money: true,
-                userName: true
+                userName: true,
             }
         })
         return res.json({ message: 'Users consulted successfully.', users })
@@ -81,7 +85,7 @@ const getUser = async (req: Request, res: Response) => {
             name: user.name,
             money: user.money,
             userName: user.userName,
-            active: user.active
+            active: user.active,
         }
         return res.json({ message: 'User consulted successfully.', data })
     } catch (error) {

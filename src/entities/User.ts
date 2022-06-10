@@ -1,5 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, OneToMany } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, BaseEntity, OneToOne, JoinColumn, OneToMany, ManyToOne } from "typeorm";
 import { Purchase } from "./Purchase";
+import { Role } from "./Role";
+
 
 @Entity()
 export class User extends BaseEntity {
@@ -21,6 +23,10 @@ export class User extends BaseEntity {
     
     @Column({ default: true })
     active: boolean
+
+    @ManyToOne(()=> Role, (rol) => rol.user)
+    @JoinColumn()
+    role: Role
 
     @OneToMany(() => Purchase, (purchase) => purchase.user)
     purchase: Purchase[]
