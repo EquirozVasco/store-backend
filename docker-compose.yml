@@ -4,19 +4,21 @@ services:
   postgres:
     container_name: postgres
     image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB= store_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin123
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust 
   api:
     build:
       context: .
-      target: development
+      target: production
     volumes: 
       - ./:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - 3000:3000
+      - 4000:4000
     command: npm run dev
     depends_on:
       postgres
