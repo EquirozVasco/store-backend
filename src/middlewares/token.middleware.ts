@@ -1,4 +1,4 @@
-const { verifyToken } = require("../services/jwt.service")
+import {verifyToken, decodeToken}  from "../services/jwt.service";
 import { Request, Response } from "express";
 
 const verifyRequest = (req: Request, res: Response, next: any) => {
@@ -20,4 +20,4 @@ const verifyRequest = (req: Request, res: Response, next: any) => {
     }
 }
 
-export default { verifyRequest }
+export { verifyRequest }

@@ -4,7 +4,7 @@ import config from "../config";
 const jwtKey = config.jwtKey
 
 const createToken = (data: any) => {
-    const token = jwt.sign (data, jwtKey, {expiresIn: "7000m"})
+    const token = jwt.sign (data, jwtKey, {expiresIn: "120h"})
     return token
 }
 
@@ -16,7 +16,7 @@ const verifyToken = (token: any) => {
     }
 }
 
-const decodeToken = (token: any) => {
+const decodeToken = (token: any): any => {
     return jwt.verify(token, jwtKey)
 }
 

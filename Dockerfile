@@ -1,9 +1,26 @@
-FROM node:16-alpine
-RUN mkdir /my_app
-COPY package.json /my_app
-WORKDIR /my_app
-RUN npm install\
-        && npm install typescript -g
+FROM node:16-alpine as development
+
+WORKDIR /usr/src/app
+
+COPY package*.json .
+
+RUN npm install
+
 COPY . .
-RUN tsc
-ENTRYPOINT  ["node", "./dist/index.js"]
+
+RUN npm run build
+
+FROM node:16-alpine as production
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /usr/src/app
+
+COPY package*.json .
+
+RUN npm ci --only=production
+
+COPY --from=development /usr/scr/app/dist ./
+
+CMD ["node", "dist/index.js"]

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Purchase } from "../entities/Purchase";
 import { Product } from "../entities/Product";
 import { User } from "../entities/User";
+import { decodeToken } from "../services/jwt.service";
 
 const getTotalProducts = async (array: any) => {
     let totalProducts = 0
@@ -17,12 +18,14 @@ const getTotalProducts = async (array: any) => {
 
 const createPurchase = async (req: Request, res: Response) => {
     try {
-        const { name, user, products } = req.body
-        if (name === "" || user === "" || products === "") {
+        const token = req.headers.token     
+        const { name, products } = req.body
+        if (name === "" || products === "") {
             throw new Error("Please fill all fields");
         } else {
+            const tokenData = decodeToken(token)
             let totalProducts = await getTotalProducts(products)
-            let userId = user.id
+            let userId = tokenData.id
             let userUpdate = await User.findOneBy({ id: userId })
             if (!userUpdate) return res.json({ message: "User does not exist" })
             let money = userUpdate.money
@@ -32,7 +35,7 @@ const createPurchase = async (req: Request, res: Response) => {
                 const purchase = new Purchase()
                 purchase.name = name
                 purchase.total = totalProducts
-                purchase.user = user
+                purchase.user = userId
                 purchase.products = products
                 await purchase.save()
                 return res.json({ message: 'Purchase created successfully.', purchase })

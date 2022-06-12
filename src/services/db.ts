@@ -7,7 +7,7 @@ import { Role } from "../entities/Role";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: "localhost",
+    host: config.host,
     port: 5432,
     username: config.userName,
     password: config.dbpassword,
